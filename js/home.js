@@ -27,7 +27,7 @@ async function loadBooks(genre = '') {
 
     try {
         // Tembak API backend (menggunakan parameter filter jika genre diisi)
-        const response = await fetch(`http://localhost:5000/api/books?genre=${genre}`);
+        const response = await fetch(`https://3h11btfg-5000.asse.devtunnels.ms//api/books?genre=${genre}`);
         const books = await response.json();
 
         bookListContainer.innerHTML = ""; // Bersihkan teks loading
