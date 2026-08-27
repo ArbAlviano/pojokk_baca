@@ -1,0 +1,30 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pojok Baca - Masuk Akun</title>
+    <!-- Menggunakan kembali CSS yang sama agar tampilan seragam -->
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="js/theme.js"></script>
+</head>
+<body>
+
+<button class="theme-toggle theme-toggle--floating" aria-label="Ganti tema terang/gelap"></button>
+
+<div class="container">
+    <h2>Masuk Akun</h2>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Masukkan Username" required>
+        <input type="password" id="password" placeholder="Masukkan Password" required>
+        <button type="submit" class="btn-login">Masuk</button>
+    </form>
+    <div class="link">Belum punya akun? <a href="register.html">Daftar disini</a></div>
+</div>
+
+<!-- Memanggil JavaScript Terpisah Khusus Login -->
+<script src="js/login.js"></script>
+</body>
+</html>

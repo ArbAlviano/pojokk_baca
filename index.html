@@ -1,0 +1,64 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pojok Baca - Beranda</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/home.css">
+    <script src="js/theme.js"></script>
+</head>
+<body>
+
+    <!-- NAVBAR / BAGIAN ATAS -->
+    <!-- Bagian Navbar index.html yang diperbarui -->
+        <header>
+            <div class="logo">📚 Pojok Baca</div>
+            <div class="user-menu" style="display: flex; gap: 15px; align-items: center;">
+                <span id="welcomeText">Halo, Pembaca!</span>
+                <!-- TOMBOL BARU KE HALAMAN BOOKMARK -->
+                <button class="btn-bookmark-nav" onclick="window.location.href='bookmark.html'">🔖 Bookmark Saya</button>
+                <button id="logoutBtn">Logout</button>
+                <button class="theme-toggle" aria-label="Ganti tema terang/gelap"></button>
+            </div>
+</header>
+
+
+    <!-- KONTEN UTAMA -->
+    <main class="container">
+        
+        <!-- FILTER GENRE -->
+        <section class="filter-section">
+            <h3>Filter Genre:</h3>
+            <div class="filter-buttons">
+                <button class="btn-filter active" onclick="loadBooks('')">Semua</button>
+                <button class="btn-filter" onclick="loadBooks('Novel')">Novel</button>
+                <button class="btn-filter" onclick="loadBooks('Komik')">Komik</button>
+                <button class="btn-filter" onclick="loadBooks('Edukasi')">Edukasi</button>
+            </div>
+        </section>
+
+        <!-- KATALOG BUKU -->
+        <section class="catalog-section">
+            <h2>Katalog Buku Terkini</h2>
+            <div id="bookList" class="book-grid">
+                <!-- Data buku akan disuntikkan secara otomatis oleh JavaScript di sini -->
+            </div>
+        </section>
+
+        <!-- letakkan ini di dalam tag <main> di index.html -->
+<!-- SECTION RIWAYAT BACA -->
+        <section class="history-section" id="historySection" style="margin-bottom: 40px; display: none;">
+            <h2 class="history-title">Lanjut Membaca</h2>
+            <div id="historyList" class="book-grid">
+                <!-- Buku riwayat akan muncul disini -->
+            </div>
+        </section>
+
+
+    </main>
+
+    <script src="js/home.js"></script>
+</body>
+</html>
