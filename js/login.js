@@ -7,7 +7,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
     try {
         // Mengirim data login ke API server backend Node.js
-        const response = await fetch('http://localhost:5000/api/login', {
+        const response = await fetch('https://3h11btfg-5000.asse.devtunnels.ms/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
