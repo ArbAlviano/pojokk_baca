@@ -38,15 +38,15 @@ async function loadBooks() {
     }
 }
 
-const databaseUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
+const databaseUrl = process.env.DATABASE_URL || process.env.MYSQL_URL || process.env.MYSQL_PRIVATE_URL;
 const dbConfig = databaseUrl
     ? databaseUrl
     : {
-        host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
-        port: Number(process.env.DB_PORT || process.env.MYSQLPORT || 3306),
-        user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
-        password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '',
-        database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'db_pojok_baca'
+        host: process.env.DB_HOST || process.env.MYSQLHOST || process.env.MYSQL_HOST || 'localhost',
+        port: Number(process.env.DB_PORT || process.env.MYSQLPORT || process.env.MYSQL_TCP_PORT || 3306),
+        user: process.env.DB_USER || process.env.MYSQLUSER || process.env.MYSQL_USER || 'root',
+        password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || process.env.MYSQL_PASSWORD || '',
+        database: process.env.DB_NAME || process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE || 'db_pojok_baca'
     };
 const db = mysql.createConnection(dbConfig);
 
@@ -65,7 +65,13 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok' });
+    db.query('SELECT 1', error => {
+        res.status(error ? 503 : 200).json({
+            status: error ? 'degraded' : 'ok',
+            database: error ? 'disconnected' : 'connected',
+            books: booksCache.length
+        });
+    });
 });
 
 // 2. API REGISTER (Pendaftaran Akun Pembaca Baru)
@@ -286,6 +292,6 @@ app.get('/api/riwayat/:id_user', (req, res) => {
 
 // MENJALANKAN SERVER BACKEND DI PORT 5000
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server Backend Pojok Baca aktif di http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server Backend Pojok Baca aktif di port ${PORT}`);
 });
