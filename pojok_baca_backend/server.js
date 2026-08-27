@@ -19,6 +19,7 @@ const SECRET_KEY = "KODE_RAHASIA_POJOK_BACA_KAMU";
 
 // Load books from JSON file
 const BOOKS_FILE = path.join(__dirname, 'data', 'books.json');
+const EBOOK_DIR = path.join(__dirname, '..', '..', 'E-Book');
 let booksCache = [];
 
 async function loadBooks() {
@@ -128,6 +129,25 @@ app.get('/api/books', (req, res) => {
         : booksCache;
 
     res.json(books.map(({ textContent, ...book }) => book));
+});
+
+app.get('/api/books/:id/pdf', (req, res) => {
+    const book = booksCache.find(item => item.id_buku === Number(req.params.id));
+
+    if (!book || !book.pdfFile) {
+        return res.status(404).json({ message: 'PDF buku tidak ditemukan' });
+    }
+
+    const pdfPath = path.resolve(EBOOK_DIR, book.pdfFile);
+    if (!pdfPath.startsWith(path.resolve(EBOOK_DIR) + path.sep)) {
+        return res.status(400).json({ message: 'File PDF tidak valid' });
+    }
+
+    res.sendFile(pdfPath, error => {
+        if (error && !res.headersSent) {
+            res.status(error.statusCode || 500).json({ message: 'Gagal membuka PDF' });
+        }
+    });
 });
 
 app.get('/api/books/:id/text', (req, res) => {

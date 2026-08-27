@@ -15,7 +15,7 @@ async function loadBookDetail() {
 
     try {
         // Ambil data detail buku dari backend
-        const response = await fetch(`https://3h11btfg-5000.asse.devtunnels.ms/api/books/${idBuku}`);
+        const response = await fetch(`http://localhost:5000/api/books/${idBuku}`);
         const book = await response.json();
 
         if (!response.ok) {
@@ -38,7 +38,7 @@ async function loadBookDetail() {
                 
                 <div style="margin-top: 40px; display: flex; gap: 15px;">
                     <!-- PERBAIKAN DI SINI: Sudah ditambah id="readBtn" -->
-                    <a href="assets/pdf/sampel.pdf" id="readBtn" target="_blank" class="btn-read" style="padding: 12px 30px; font-size: 16px; background-color: #6c5ce7; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">📖 Mulai Membaca</a>
+                    <a href="reader.html?id=${idBuku}" id="readBtn" target="_blank" class="btn-read" style="padding: 12px 30px; font-size: 16px; background-color: #6c5ce7; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">📖 Mulai Membaca</a>
                     <button id="bookmarkBtn" style="background-color: #f1c40f; color: #2c3e50; border: none; padding: 12px 25px; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer;">⭐ Tambah Bookmark</button>
                 </div>
             </div>
@@ -51,7 +51,7 @@ async function loadBookDetail() {
         document.getElementById('readBtn').addEventListener('click', async () => {
             try {
                 // Kirim data ke API riwayat tanpa mengganggu pembukaan file PDF
-                await fetch('https://3h11btfg-5000.asse.devtunnels.ms/api/riwayat', {
+                await fetch('http://localhost:5000/api/riwayat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -73,7 +73,7 @@ async function loadBookDetail() {
 // 3. FUNGSI KIRIM DATA BOOKMARK KE BACKEND
 async function addToBookmark() {
     try {
-        const response = await fetch('https://3h11btfg-5000.asse.devtunnels.ms/api/bookmarks', {
+        const response = await fetch('http://localhost:5000/api/bookmarks', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

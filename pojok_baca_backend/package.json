@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "extract": "node scripts/extract-pdfs.js"
+    "extract": "node scripts/extract-pdfs.js",
+    "seed": "node scripts/seed-mysql.js"
   },
   "keywords": ["ebook", "api", "books"],
   "author": "",

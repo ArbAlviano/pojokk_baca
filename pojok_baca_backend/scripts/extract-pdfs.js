@@ -58,6 +58,7 @@ async function extractPdf(pdfPath, id) {
       penulis,
       genre: 'Umum',
       cover_buku,
+      pdfFile: filename,
       sinopsis,
       textContent: data.text,
       pageCount: data.numpages,

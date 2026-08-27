@@ -1,0 +1,36 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.reader-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.reader-actions button {
+    border: 0;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.reader-container {
+    max-width: 900px;
+    margin: 32px auto;
+    padding: 0 20px 48px;
+}
+
+#readerStatus {
+    color: var(--text-secondary);
+}
+
+.pdf-viewer {
+    width: 100%;
+    height: calc(100vh - 170px);
+    min-height: 600px;
+    border: 0;
+    background: #525659;
+}

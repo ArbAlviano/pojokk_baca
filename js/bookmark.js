@@ -18,7 +18,7 @@ async function loadBookmarkBooks() {
 
     try {
         // Tembak API dengan menyertakan ID User yang sedang login
-        const response = await fetch(`https://3h11btfg-5000.asse.devtunnels.ms/${user.id_user}`);
+        const response = await fetch(`http://localhost:5000/api/bookmarks/${user.id_user}`);
         const books = await response.json();
 
         bookmarkListContainer.innerHTML = ""; // Bersihkan teks loading
