@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fs = require('fs-extra');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 
@@ -39,10 +40,11 @@ async function loadBooks() {
 
 // 1. KONEKSI KE MYSQL LARAGON (Menargetkan db_pojok_baca secara spesifik)
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'db_pojok_baca'
+    host: process.env.DB_HOST || 'localhost',
+    port: Number(process.env.DB_PORT || 3306),
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'db_pojok_baca'
 });
 
 db.connect((err) => {
