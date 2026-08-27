@@ -15,7 +15,7 @@ async function loadBookDetail() {
 
     try {
         // Ambil data detail buku dari backend
-        const response = await fetch(`https://3h11btfg-5000.asse.devtunnels.ms//api/books/${idBuku}`);
+        const response = await fetch(`https://3h11btfg-5000.asse.devtunnels.ms/api/books/${idBuku}`);
         const book = await response.json();
 
         if (!response.ok) {
@@ -51,7 +51,7 @@ async function loadBookDetail() {
         document.getElementById('readBtn').addEventListener('click', async () => {
             try {
                 // Kirim data ke API riwayat tanpa mengganggu pembukaan file PDF
-                await fetch('https://3h11btfg-5000.asse.devtunnels.ms//api/riwayat', {
+                await fetch('https://3h11btfg-5000.asse.devtunnels.ms/api/riwayat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
