@@ -83,7 +83,7 @@ async function loadReadingHistory() {
     const historyListContainer = document.getElementById('historyList');
 
     try {
-        const response = await fetch(`http://localhost:5000/api/riwayat/${user.id_user}`);
+        const response = await fetch(`https://3h11btfg-5000.asse.devtunnels.ms/api/riwayat/${user.id_user}`);
         const historyBooks = await response.json();
 
         if (historyBooks.length === 0) {

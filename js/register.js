@@ -7,7 +7,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
 
     try {
         // Mengirim data ke server backend Node.js (Port 5000)
-        const response = await fetch('http://localhost:5000/api/register', {
+        const response = await fetch('https://3h11btfg-5000.asse.devtunnels.ms/api/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -73,7 +73,7 @@ async function loadBookDetail() {
 // 3. FUNGSI KIRIM DATA BOOKMARK KE BACKEND
 async function addToBookmark() {
     try {
-        const response = await fetch('http://localhost:5000/api/bookmarks', {
+        const response = await fetch('https://3h11btfg-5000.asse.devtunnels.ms/api/bookmarks', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
