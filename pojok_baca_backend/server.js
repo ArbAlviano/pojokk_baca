@@ -40,11 +40,11 @@ async function loadBooks() {
 
 // 1. KONEKSI KE MYSQL LARAGON (Menargetkan db_pojok_baca secara spesifik)
 const db = mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'db_pojok_baca'
+    host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
+    port: Number(process.env.DB_PORT || process.env.MYSQLPORT || 3306),
+    user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
+    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '',
+    database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'db_pojok_baca'
 });
 
 db.connect((err) => {
@@ -56,6 +56,14 @@ db.connect((err) => {
 });
 
 loadBooks();
+
+app.get('/', (req, res) => {
+    res.json({ message: 'Pojok Baca API aktif', books: booksCache.length });
+});
+
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok' });
+});
 
 // 2. API REGISTER (Pendaftaran Akun Pembaca Baru)
 app.post('/api/register', async (req, res) => {
