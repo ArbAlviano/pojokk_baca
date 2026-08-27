@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000';
+const API_URL = window.API_URL || 'http://localhost:5000';
 const params = new URLSearchParams(window.location.search);
 const bookId = params.get('id');
 const titleElement = document.getElementById('bookTitle');

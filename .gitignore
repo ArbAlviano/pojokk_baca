@@ -1,0 +1,19 @@
+# Dependencies
+pojok_baca_backend/node_modules/
+
+# Environment secrets
+pojok_baca_backend/.env
+
+# Local PDF source files
+E-Book/
+
+# Generated extracted data
+# Keep books.json tracked until API reads all metadata from MySQL
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db

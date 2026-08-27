@@ -1,3 +1,5 @@
+const API_URL = window.API_URL || 'http://localhost:5000';
+
 /* js/register.js */
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault(); // Mencegah halaman refresh otomatis
@@ -7,7 +9,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
 
     try {
         // Mengirim data ke server backend Node.js (Port 5000)
-        const response = await fetch('http://localhost:5000/api/register', {
+        const response = await fetch(`${API_URL}/api/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

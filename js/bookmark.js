@@ -1,3 +1,5 @@
+const API_URL = window.API_URL || 'http://localhost:5000';
+
 /* js/bookmark.js */
 
 // 1. PROTEKSI HALAMAN: Cek login
@@ -18,7 +20,7 @@ async function loadBookmarkBooks() {
 
     try {
         // Tembak API dengan menyertakan ID User yang sedang login
-        const response = await fetch(`http://localhost:5000/api/bookmarks/${user.id_user}`);
+        const response = await fetch(`${API_URL}/api/bookmarks/${user.id_user}`);
         const books = await response.json();
 
         bookmarkListContainer.innerHTML = ""; // Bersihkan teks loading

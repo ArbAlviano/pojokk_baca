@@ -1,3 +1,5 @@
+const API_URL = window.API_URL || 'http://localhost:5000';
+
 /* js/detail.js */
 
 // 1. Ambil ID Buku dari URL (misal: detail.html?id=1)
@@ -15,7 +17,7 @@ async function loadBookDetail() {
 
     try {
         // Ambil data detail buku dari backend
-        const response = await fetch(`http://localhost:5000/api/books/${idBuku}`);
+        const response = await fetch(`${API_URL}/api/books/${idBuku}`);
         const book = await response.json();
 
         if (!response.ok) {
@@ -51,7 +53,7 @@ async function loadBookDetail() {
         document.getElementById('readBtn').addEventListener('click', async () => {
             try {
                 // Kirim data ke API riwayat tanpa mengganggu pembukaan file PDF
-                await fetch('http://localhost:5000/api/riwayat', {
+                await fetch(`${API_URL}/api/riwayat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -73,7 +75,7 @@ async function loadBookDetail() {
 // 3. FUNGSI KIRIM DATA BOOKMARK KE BACKEND
 async function addToBookmark() {
     try {
-        const response = await fetch('http://localhost:5000/api/bookmarks', {
+        const response = await fetch(`${API_URL}/api/bookmarks`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -7,15 +7,22 @@
     "start": "node server.js",
     "dev": "node server.js",
     "extract": "node scripts/extract-pdfs.js",
-    "seed": "node scripts/seed-mysql.js"
+    "seed": "node scripts/seed-mysql.js",
+    "upload": "node scripts/upload-cloudinary.js"
   },
-  "keywords": ["ebook", "api", "books"],
+  "keywords": [
+    "ebook",
+    "api",
+    "books"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.11.0",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "fs-extra": "^11.4.0",
     "jsonwebtoken": "^9.0.3",

@@ -138,6 +138,10 @@ app.get('/api/books/:id/pdf', (req, res) => {
         return res.status(404).json({ message: 'PDF buku tidak ditemukan' });
     }
 
+    if (book.pdfUrl) {
+        return res.redirect(book.pdfUrl);
+    }
+
     const pdfPath = path.resolve(EBOOK_DIR, book.pdfFile);
     if (!pdfPath.startsWith(path.resolve(EBOOK_DIR) + path.sep)) {
         return res.status(400).json({ message: 'File PDF tidak valid' });

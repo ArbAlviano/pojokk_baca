@@ -1,3 +1,5 @@
+const API_URL = window.API_URL || 'http://localhost:5000';
+
 /* js/home.js */
 
 // 1. PROTEKSI HALAMAN: Cek apakah user sudah login
@@ -27,7 +29,7 @@ async function loadBooks(genre = '') {
 
     try {
         // Tembak API backend (menggunakan parameter filter jika genre diisi)
-        const response = await fetch(`http://localhost:5000/api/books?genre=${genre}`);
+        const response = await fetch(`${API_URL}/api/books?genre=${genre}`);
         const books = await response.json();
 
         bookListContainer.innerHTML = ""; // Bersihkan teks loading
@@ -83,7 +85,7 @@ async function loadReadingHistory() {
     const historyListContainer = document.getElementById('historyList');
 
     try {
-        const response = await fetch(`http://localhost:5000/api/riwayat/${user.id_user}`);
+        const response = await fetch(`${API_URL}/api/riwayat/${user.id_user}`);
         const historyBooks = await response.json();
 
         if (historyBooks.length === 0) {

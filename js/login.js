@@ -1,3 +1,5 @@
+const API_URL = window.API_URL || 'http://localhost:5000';
+
 /* js/login.js */
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault(); // Mencegah halaman refresh otomatis
@@ -7,7 +9,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
     try {
         // Mengirim data login ke API server backend Node.js
-        const response = await fetch('http://localhost:5000/api/login', {
+        const response = await fetch(`${API_URL}/api/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
