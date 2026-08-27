@@ -38,14 +38,17 @@ async function loadBooks() {
     }
 }
 
-// 1. KONEKSI KE MYSQL LARAGON (Menargetkan db_pojok_baca secara spesifik)
-const db = mysql.createConnection({
-    host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
-    port: Number(process.env.DB_PORT || process.env.MYSQLPORT || 3306),
-    user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
-    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '',
-    database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'db_pojok_baca'
-});
+const databaseUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
+const dbConfig = databaseUrl
+    ? databaseUrl
+    : {
+        host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
+        port: Number(process.env.DB_PORT || process.env.MYSQLPORT || 3306),
+        user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
+        password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '',
+        database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'db_pojok_baca'
+    };
+const db = mysql.createConnection(dbConfig);
 
 db.connect((err) => {
     if (err) {
