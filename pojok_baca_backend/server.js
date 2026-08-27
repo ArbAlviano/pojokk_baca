@@ -3,6 +3,8 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fs = require('fs-extra');
+const path = require('path');
 
 const app = express();
 
@@ -15,11 +17,30 @@ app.use(express.json());
 // Kunci rahasia untuk membuat token login (JWT). Bebas diganti teks apa saja.
 const SECRET_KEY = "KODE_RAHASIA_POJOK_BACA_KAMU";
 
+// Load books from JSON file
+const BOOKS_FILE = path.join(__dirname, 'data', 'books.json');
+let booksCache = [];
+
+async function loadBooks() {
+    try {
+        if (await fs.pathExists(BOOKS_FILE)) {
+            booksCache = await fs.readJson(BOOKS_FILE);
+            console.log(`Loaded ${booksCache.length} books from JSON`);
+        } else {
+            console.warn('Books JSON not found. Run "npm run extract" first.');
+            booksCache = [];
+        }
+    } catch (error) {
+        console.error('Error loading books:', error);
+        booksCache = [];
+    }
+}
+
 // 1. KONEKSI KE MYSQL LARAGON (Menargetkan db_pojok_baca secara spesifik)
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root',      // Default user Laragon
-    password: '',      // Default password Laragon (kosong)
+    user: 'root',
+    password: '',
     database: 'db_pojok_baca'
 });
 
@@ -30,6 +51,8 @@ db.connect((err) => {
         console.log('Berhasil terhubung ke database MySQL Laragon (db_pojok_baca)!');
     }
 });
+
+loadBooks();
 
 // 2. API REGISTER (Pendaftaran Akun Pembaca Baru)
 app.post('/api/register', async (req, res) => {
@@ -98,38 +121,39 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// 4. API UNTUK MENGAMBIL SEMUA BUKU & FILTER BERDASARKAN GENRE
 app.get('/api/books', (req, res) => {
-    // Mengambil parameter genre dari URL jika ada (misal: /api/books?genre=Novel)
-    const { genre } = req.query; 
-    
-    let query = "SELECT * FROM buku";
-    let queryParams = [];
+    const { genre } = req.query;
+    const books = genre
+        ? booksCache.filter(book => book.genre.toLowerCase() === String(genre).toLowerCase())
+        : booksCache;
 
-    // Jika user memilih genre tertentu, saring datanya menggunakan WHERE
-    if (genre) {
-        query += " WHERE genre = ?";
-        queryParams.push(genre);
+    res.json(books.map(({ textContent, ...book }) => book));
+});
+
+app.get('/api/books/:id/text', (req, res) => {
+    const book = booksCache.find(item => item.id_buku === Number(req.params.id));
+
+    if (!book) {
+        return res.status(404).json({ message: 'Buku tidak ditemukan' });
     }
 
-    db.query(query, queryParams, (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        // Mengembalikan daftar buku dalam bentuk JSON ke Frontend
-        res.json(results); 
+    res.json({
+        id_buku: book.id_buku,
+        judul: book.judul,
+        pageCount: book.pageCount,
+        textContent: book.textContent
     });
 });
 
-// 5. API UNTUK MENGAMBIL DETAIL SATU BUKU BERDASARKAN ID
 app.get('/api/books/:id', (req, res) => {
-    const { id } = req.params;
-    const query = "SELECT * FROM buku WHERE id_buku = ?";
-    db.query(query, [id], (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (results.length === 0) return res.status(404).json({ message: "Buku tidak ditemukan" });
-        res.json(results[0]);
-    });
+    const book = booksCache.find(item => item.id_buku === Number(req.params.id));
+
+    if (!book) {
+        return res.status(404).json({ message: 'Buku tidak ditemukan' });
+    }
+
+    const { textContent, ...bookDetail } = book;
+    res.json(bookDetail);
 });
 
 // 6. API UNTUK MENAMBAH BUKUMARK (Wajib Kirim id_user dan id_buku)
@@ -160,17 +184,17 @@ app.get('/api/bookmarks/:id_user', (req, res) => {
     const { id_user } = req.params;
 
     // Menggunakan teknik SQL JOIN untuk mengambil data buku lengkap berdasarkan tabel bookmark
-    const query = `
-        SELECT buku.* FROM bookmarks 
-        JOIN buku ON bookmarks.id_buku = buku.id_buku 
-        WHERE bookmarks.id_user = ?
-    `;
+    const query = 'SELECT id_buku FROM bookmarks WHERE id_user = ?';
 
     db.query(query, [id_user], (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        res.json(results); // Mengembalikan daftar buku favorit dalam bentuk JSON
+
+        const books = results
+            .map(({ id_buku }) => booksCache.find(book => book.id_buku === id_buku))
+            .filter(Boolean);
+        res.json(books.map(({ textContent, ...book }) => book));
     });
 });
 
