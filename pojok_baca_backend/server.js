@@ -7,6 +7,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const https = require('https');
 const http = require('http');
+const { resolveBookFromCache } = require('./lib/resolveBook');
 require('dotenv').config();
 
 const app = express();
@@ -40,15 +41,8 @@ async function loadBooks() {
     }
 }
 
-// Resolusi buku dari booksCache dengan membuang textContent (payload besar)
-// supaya konsisten antara endpoint bookmark dan riwayat. Mengembalikan null
-// bila id_buku tidak ditemukan di cache.
-function resolveBookFromCache(idBuku, extra = {}) {
-    const book = booksCache.find(b => b.id_buku === idBuku);
-    if (!book) return null;
-    const { textContent, ...meta } = book;
-    return { ...meta, ...extra };
-}
+// Resolusi buku dari booksCache (lihat lib/resolveBook.js) dengan membuang
+// textContent (payload besar) supaya konsisten antara endpoint bookmark dan riwayat.
 
 const databaseUrl = process.env.DATABASE_URL || process.env.MYSQL_URL || process.env.MYSQL_PRIVATE_URL;
 const dbConfig = databaseUrl
@@ -278,7 +272,7 @@ app.get('/api/bookmarks/:id_user', (req, res) => {
         }
 
         const books = results
-            .map(({ id_buku }) => resolveBookFromCache(id_buku))
+            .map(({ id_buku }) => resolveBookFromCache(booksCache, id_buku))
             .filter(Boolean);
         res.json(books);
     });
@@ -333,7 +327,7 @@ app.get('/api/riwayat/:id_user', (req, res) => {
     db.query(query, [id_user], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         const books = results
-            .map(({ id_buku, waktu_baca }) => resolveBookFromCache(id_buku, { waktu_baca }))
+            .map(({ id_buku, waktu_baca }) => resolveBookFromCache(booksCache, id_buku, { waktu_baca }))
             .filter(Boolean)
             .slice(0, 3);
         res.json(books);

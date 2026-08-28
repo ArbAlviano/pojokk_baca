@@ -8,7 +8,8 @@
     "dev": "node server.js",
     "extract": "node scripts/extract-pdfs.js",
     "seed": "node scripts/seed-mysql.js",
-    "upload": "node scripts/upload-cloudinary.js"
+    "upload": "node scripts/upload-cloudinary.js",
+    "test": "node --test"
   },
   "keywords": [
     "ebook",
