@@ -10,6 +10,17 @@ E-Book/
 # Generated extracted data
 # Keep books.json tracked until API reads all metadata from MySQL
 
+# One-off seed / import artifacts (not part of app, used only for Railway MySQL setup)
+pojok_baca_backend/scripts/seed-buku.sql
+pojok_baca_backend/scripts/seed-buku-core.sql
+pojok_baca_backend/scripts/seed-buku-parts/
+pojok_baca_backend/scripts/generate-seed.js
+pojok_baca_backend/scripts/generate-seed-core.js
+pojok_baca_backend/scripts/generate-seed-parts.js
+pojok_baca_backend/scripts/import-seed.ps1
+pojok_baca_backend/scripts/run-schema.js
+pojok_baca_backend/scripts/railway-schema.sql
+
 # Logs
 *.log
 npm-debug.log*

@@ -309,17 +309,24 @@ app.get('/api/riwayat/:id_user/:id_buku', (req, res) => {
 app.get('/api/riwayat/:id_user', (req, res) => {
     const { id_user } = req.params;
 
-    // Mengambil data buku yang diurutkan berdasarkan waktu baca terbaru (LIMIT 3 saja agar beranda rapi)
+    // Ambil id_buku + waktu_baca dari DB saja; data buku diambil dari booksCache
+    // supaya judul/metadata selalu konsisten dengan books.json (tidak bergantung pada tabel buku di DB).
     const query = `
-        SELECT buku.*, riwayat_baca.waktu_baca FROM riwayat_baca 
-        JOIN buku ON riwayat_baca.id_buku = buku.id_buku 
+        SELECT riwayat_baca.id_buku, riwayat_baca.waktu_baca 
+        FROM riwayat_baca 
         WHERE riwayat_baca.id_user = ? 
         ORDER BY riwayat_baca.waktu_baca DESC LIMIT 3
     `;
 
     db.query(query, [id_user], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json(results);
+        const books = results
+            .map(({ id_buku, waktu_baca }) => {
+                const book = booksCache.find(b => b.id_buku === id_buku);
+                return book ? { ...book, waktu_baca } : null;
+            })
+            .filter(Boolean);
+        res.json(books);
     });
 });
 
