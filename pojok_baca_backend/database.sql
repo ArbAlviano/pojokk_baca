@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS bookmarks (
 CREATE TABLE IF NOT EXISTS riwayat_baca (
     id_user INT NOT NULL,
     id_buku INT NOT NULL,
+    halaman INT NOT NULL DEFAULT 1,
     waktu_baca TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id_user, id_buku),
     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,

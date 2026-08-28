@@ -35,7 +35,7 @@ async function loadBookmarkBooks() {
             const cardHTML = `
                 <div class="book-card">
                     <div>
-                        <img src="assets/img/${book.cover_buku}" alt="${book.judul}">
+                        ${coverImgTag(book, '3b82f6')}
                         <h4>${book.judul}</h4>
                         <p>Penulis: ${book.penulis}</p>
                     </div>

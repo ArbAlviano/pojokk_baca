@@ -41,15 +41,10 @@ async function loadBooks(genre = '') {
 
         // Looping data JSON dan suntikkan ke dalam HTML
         books.forEach(book => {
-            // Menggunakan layanan placeholder otomatis karena file cover fisik belum diunggah asli
-            // KODE BARU (Mengambil foto asli dari folder assets/img):
-            const coverUrl = `assets/img/${book.cover_buku}`;
-
-            
             const cardHTML = `
                 <div class="book-card">
                     <div>
-                        <img src="${coverUrl}" alt="${book.judul}">
+                        ${coverImgTag(book, '3b82f6')}
                         <h4>${book.judul}</h4>
                         <p>Penulis: ${book.penulis}</p>
                     </div>
@@ -57,7 +52,6 @@ async function loadBooks(genre = '') {
                     <a href="detail.html?id=${book.id_buku}" class="btn-read" style="background-color: #3498db;">Lihat Deskripsi</a>
                     </div>
                 `;
-            ;
             bookListContainer.innerHTML += cardHTML;
         });
 
@@ -100,7 +94,7 @@ async function loadReadingHistory() {
             const cardHTML = `
                 <div class="book-card">
                     <div>
-                        <img src="assets/img/${book.cover_buku}" alt="${book.judul}">
+                        ${coverImgTag(book, 'e74c3c')}
                         <h4>${book.judul}</h4>
                         <p style="color: #e74c3c; font-weight: bold; font-size: 11px;">Dibaca baru-baru ini</p>
                     </div>

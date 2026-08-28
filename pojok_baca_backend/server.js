@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fs = require('fs-extra');
 const path = require('path');
+const https = require('https');
+const http = require('http');
 require('dotenv').config();
 
 const app = express();
@@ -150,15 +152,46 @@ app.get('/api/books', (req, res) => {
     res.json(books.map(({ textContent, ...book }) => book));
 });
 
+function proxyPdf(url, res, depth = 0) {
+    if (depth > 5) {
+        return res.status(502).json({ message: 'Terlalu banyak redirect' });
+    }
+    const client = url.startsWith('https') ? https : http;
+    const request = client.get(url, upstream => {
+        if (upstream.statusCode && upstream.statusCode >= 300 && upstream.statusCode < 400 && upstream.headers.location) {
+            proxyPdf(upstream.headers.location, res, depth + 1);
+            return;
+        }
+        if (upstream.statusCode !== 200) {
+            res.status(upstream.statusCode || 502).json({ message: 'Gagal mengambil PDF dari storage' });
+            return;
+        }
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        if (upstream.headers['content-length']) {
+            res.setHeader('Content-Length', upstream.headers['content-length']);
+        }
+        upstream.pipe(res);
+    });
+    request.setTimeout(30000, () => {
+        request.destroy();
+        if (!res.headersSent) res.status(504).json({ message: 'Timeout mengambil PDF' });
+    });
+    request.on('error', () => {
+        if (!res.headersSent) res.status(502).json({ message: 'Storage tidak dapat dihubungi' });
+    });
+}
+
 app.get('/api/books/:id/pdf', (req, res) => {
     const book = booksCache.find(item => item.id_buku === Number(req.params.id));
 
-    if (!book || !book.pdfFile) {
+    if (!book || (!book.pdfFile && !book.pdfUrl)) {
         return res.status(404).json({ message: 'PDF buku tidak ditemukan' });
     }
 
     if (book.pdfUrl) {
-        return res.redirect(book.pdfUrl);
+        return proxyPdf(book.pdfUrl, res);
     }
 
     const pdfPath = path.resolve(EBOOK_DIR, book.pdfFile);
@@ -243,36 +276,36 @@ app.get('/api/bookmarks/:id_user', (req, res) => {
 
 // 8. API UNTUK MENCATAT RIWAYAT BACA BARU (Dicuat saat tombol baca diklik)
 app.post('/api/riwayat', (req, res) => {
-    const { id_user, id_buku } = req.body;
+    const { id_user, id_buku, halaman = 1 } = req.body;
 
     if (!id_user || !id_buku) {
         return res.status(400).json({ message: "Data riwayat tidak lengkap!" });
     }
 
-    // Cek apakah user sudah pernah membaca buku ini sebelumnya
-    const checkQuery = "SELECT * FROM riwayat_baca WHERE id_user = ? AND id_buku = ?";
-    db.query(checkQuery, [id_user, id_buku], (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+    const query = `
+        INSERT INTO riwayat_baca (id_user, id_buku, halaman)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE halaman = VALUES(halaman), waktu_baca = CURRENT_TIMESTAMP
+    `;
 
-        if (results.length > 0) {
-            // Jika sudah ada, perbarui saja waktu_baca menjadi jam sekarang
-            const updateQuery = "UPDATE riwayat_baca SET waktu_baca = CURRENT_TIMESTAMP WHERE id_user = ? AND id_buku = ?";
-            db.query(updateQuery, [id_user, id_buku], (err, result) => {
-                if (err) return res.status(500).json({ error: err.message });
-                return res.json({ message: "Waktu riwayat diperbarui!" });
-            });
-        } else {
-            // Jika belum ada, buat baris riwayat baca baru
-            const insertQuery = "INSERT INTO riwayat_baca (id_user, id_buku) VALUES (?, ?)";
-            db.query(insertQuery, [id_user, id_buku], (err, result) => {
-                if (err) return res.status(500).json({ error: err.message });
-                return res.status(201).json({ message: "Riwayat baca baru dicatat!" });
-            });
-        }
+    db.query(query, [id_user, id_buku, Math.max(1, Number(halaman) || 1)], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Riwayat baca diperbarui!" });
     });
 });
 
-// 9. API UNTUK MENGAMBIL 3 RIWAYAT BACA TERAKHIR DARI USER TERTENJU
+app.get('/api/riwayat/:id_user/:id_buku', (req, res) => {
+    const { id_user, id_buku } = req.params;
+    const query = "SELECT halaman FROM riwayat_baca WHERE id_user = ? AND id_buku = ?";
+
+    db.query(query, [id_user, id_buku], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ halaman: results[0]?.halaman || 1 });
+    });
+});
+
+// Note: GET /api/riwayat/:id_user/:id_buku is placed BEFORE GET /api/riwayat/:id_user
+// because Express matches longer paths first when segment count differs.
 app.get('/api/riwayat/:id_user', (req, res) => {
     const { id_user } = req.params;
 

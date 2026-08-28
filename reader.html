@@ -6,17 +6,48 @@
     <title>Membaca - Pojok Baca</title>
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/reader.css">
+    <script>
+        window.API_URL = window.API_URL || 'https://pojokkbaca-production.up.railway.app';
+    </script>
 </head>
 <body>
-    <header>
-        <div class="logo">Pojok Baca</div>
-        <button id="backBtn" type="button">Kembali</button>
+    <header class="reader-header">
+        <div class="reader-header-left">
+            <button id="backBtn" type="button" aria-label="Kembali">←</button>
+            <h1 id="bookTitle">Memuat buku...</h1>
+        </div>
+        <div class="reader-header-right">
+            <div class="progress-container" aria-label="Kemajuan baca">
+                <span id="pageInfo">1 / 1</span>
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+            </div>
+            <div class="reader-controls">
+                <button id="themeToggle" type="button" aria-label="Toggle tema">☀</button>
+                <button id="fullscreenBtn" type="button" aria-label="Layar penuh">⛶</button>
+            </div>
+        </div>
     </header>
-    <main class="reader-container">
-        <h1 id="bookTitle">Memuat buku...</h1>
-        <p id="readerStatus">Memuat PDF...</p>
-        <iframe id="pdfViewer" title="Pembaca PDF" class="pdf-viewer"></iframe>
+    <main class="reader-container" id="readerContainer">
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="spinner"></div>
+            <p>Memuat halaman...</p>
+        </div>
+        <div id="pdfContainer" class="pdf-container"></div>
     </main>
-    <script src="js/reader.js"></script>
+    <footer class="reader-footer">
+        <div class="footer-left">
+            <button id="prevPage" type="button" aria-label="Halaman sebelumnya" disabled>← Sebelumnya</button>
+        </div>
+        <div class="footer-center">
+            <input type="number" id="pageInput" min="1" value="1" aria-label="Lompat ke halaman">
+            <span id="totalPages">/ 1</span>
+        </div>
+        <div class="footer-right">
+            <button id="nextPage" type="button" aria-label="Halaman selanjutnya" disabled>Selanjutnya →</button>
+        </div>
+    </footer>
+    <script type="module" src="js/reader.js"></script>
 </body>
 </html>

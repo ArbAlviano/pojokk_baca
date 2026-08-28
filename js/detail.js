@@ -28,7 +28,7 @@ async function loadBookDetail() {
         // Tampilkan foto cover asli, judul, penulis, dan SINOPSIS/DESKRIPSI lengkap
         document.getElementById('bookDetail').innerHTML = `
             <div style="flex: 1; text-align: center;">
-                <img src="assets/img/${book.cover_buku}" alt="${book.judul}" style="width: 250px; height: 360px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                ${detailCoverImgTag(book)}
             </div>
             <div style="flex: 2;">
                 <span style="background: #3498db; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">${book.genre}</span>
