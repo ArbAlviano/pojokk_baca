@@ -40,6 +40,16 @@ async function loadBooks() {
     }
 }
 
+// Resolusi buku dari booksCache dengan membuang textContent (payload besar)
+// supaya konsisten antara endpoint bookmark dan riwayat. Mengembalikan null
+// bila id_buku tidak ditemukan di cache.
+function resolveBookFromCache(idBuku, extra = {}) {
+    const book = booksCache.find(b => b.id_buku === idBuku);
+    if (!book) return null;
+    const { textContent, ...meta } = book;
+    return { ...meta, ...extra };
+}
+
 const databaseUrl = process.env.DATABASE_URL || process.env.MYSQL_URL || process.env.MYSQL_PRIVATE_URL;
 const dbConfig = databaseUrl
     ? databaseUrl
@@ -268,9 +278,9 @@ app.get('/api/bookmarks/:id_user', (req, res) => {
         }
 
         const books = results
-            .map(({ id_buku }) => booksCache.find(book => book.id_buku === id_buku))
+            .map(({ id_buku }) => resolveBookFromCache(id_buku))
             .filter(Boolean);
-        res.json(books.map(({ textContent, ...book }) => book));
+        res.json(books);
     });
 });
 
@@ -311,21 +321,21 @@ app.get('/api/riwayat/:id_user', (req, res) => {
 
     // Ambil id_buku + waktu_baca dari DB saja; data buku diambil dari booksCache
     // supaya judul/metadata selalu konsisten dengan books.json (tidak bergantung pada tabel buku di DB).
+    // Tidak memakai LIMIT di SQL: buku yang sudah dihapus dari booksCache disaring dulu,
+    // baru diambil 3 terbaru agar baris beranda selalu rapi.
     const query = `
         SELECT riwayat_baca.id_buku, riwayat_baca.waktu_baca 
         FROM riwayat_baca 
         WHERE riwayat_baca.id_user = ? 
-        ORDER BY riwayat_baca.waktu_baca DESC LIMIT 3
+        ORDER BY riwayat_baca.waktu_baca DESC
     `;
 
     db.query(query, [id_user], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         const books = results
-            .map(({ id_buku, waktu_baca }) => {
-                const book = booksCache.find(b => b.id_buku === id_buku);
-                return book ? { ...book, waktu_baca } : null;
-            })
-            .filter(Boolean);
+            .map(({ id_buku, waktu_baca }) => resolveBookFromCache(id_buku, { waktu_baca }))
+            .filter(Boolean)
+            .slice(0, 3);
         res.json(books);
     });
 });
