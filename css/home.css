@@ -1,4 +1,7 @@
 /* css/home.css */
+html, body {
+    overflow-x: hidden;
+}
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -15,34 +18,20 @@ header {
     align-items: center;
 }
 .logo { font-size: 24px; font-weight: bold; }
-#logoutBtn {
-    background-color: var(--accent-red);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-#logoutBtn:hover { background-color: var(--accent-red-hover); }
-.btn-bookmark-nav {
-    background-color: var(--accent-yellow);
-    color: var(--text-on-yellow);
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-}
-.btn-bookmark-nav:hover { filter: brightness(0.93); }
 .container {
     max-width: 1200px;
     margin: 30px auto;
     padding: 0 20px;
 }
 .filter-section { margin-bottom: 30px; }
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 .filter-buttons button {
     padding: 10px 20px;
-    margin-right: 10px;
+    margin-right: 0;
     border: 1px solid var(--border-strong);
     background: var(--bg-surface);
     color: var(--text-primary);
@@ -101,4 +90,141 @@ header {
     color: var(--text-primary);
     border-bottom: 2px solid var(--accent-red);
     padding-bottom: 10px;
+}
+
+/* ===== Tombol pencarian di header ===== */
+.search-btn {
+    background: transparent;
+    color: inherit;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.9;
+    padding: 0;
+    transition: opacity 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+.search-btn:hover {
+    opacity: 1;
+    background-color: var(--bg-surface-hover);
+    transform: scale(1.06);
+}
+.search-btn svg { display: block; }
+
+/* ===== Bar pencarian di bawah header ===== */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 30px;
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+}
+.search-bar input[type="text"] {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--border-input);
+    border-radius: 6px;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-size: 15px;
+    outline: none;
+}
+.search-bar input[type="text"]:focus {
+    border-color: var(--accent-blue);
+}
+.search-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+}
+.search-close:hover { color: var(--text-primary); }
+
+/* ===== Paginasi ===== */
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+}
+.page-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--border-strong);
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.page-btn:hover:not(:disabled) {
+    background-color: var(--bg-surface-hover);
+}
+.page-btn.active {
+    background-color: var(--accent-blue);
+    color: white;
+    border-color: var(--accent-blue);
+}
+.page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ===== Header rapih untuk layar kecil (mobile) ===== */
+@media (max-width: 768px) {
+    header {
+        gap: 10px;
+        padding: 12px 16px;
+    }
+
+    .search-bar {
+        padding: 10px 16px;
+    }
+
+    .container {
+        padding: 0 12px;
+    }
+
+    .book-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .book-card {
+        min-width: 0;
+        padding: 10px;
+    }
+
+    .book-card img {
+        height: 160px;
+    }
+
+    .book-card h4 {
+        overflow-wrap: break-word;
+        font-size: 14px;
+        margin: 10px 0 4px;
+    }
+
+    .book-card p {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .book-card .btn-read {
+        padding: 8px;
+        font-size: 13px;
+    }
 }

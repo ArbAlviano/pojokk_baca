@@ -27,21 +27,27 @@ async function loadBookDetail() {
 
         // Tampilkan foto cover asli, judul, penulis, dan SINOPSIS/DESKRIPSI lengkap
         document.getElementById('bookDetail').innerHTML = `
-            <div style="flex: 1; text-align: center;">
+            <div class="left-content">
                 ${detailCoverImgTag(book)}
+                <div class="action-buttons">
+                    <a href="reader.html?id=${idBuku}" id="readBtn" target="_blank" class="btn-main-read">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        Mulai Membaca
+                    </a>
+                    <button id="bookmarkBtn" class="btn-main-bookmark">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                        Tambah Bookmark
+                    </button>
+                </div>
             </div>
-            <div style="flex: 2;">
-                <span style="background: #3498db; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">${book.genre}</span>
-                <h1 style="margin: 15px 0 5px; color: var(--text-primary);">${book.judul}</h1>
-                <h3 style="margin: 0 0 20px; color: var(--text-secondary); font-weight: normal;">Penulis: ${book.penulis}</h3>
-                
+            <div class="right-content">
+                <span class="tag" style="background: #3498db; color: white;">${book.genre}</span>
+                <h1 class="book-title">${book.judul}</h1>
+                <h3 class="book-author">Penulis: ${book.penulis}</h3>
+
                 <h4 style="margin: 30px 0 10px; color: var(--text-primary);">Sinopsis / Deskripsi:</h4>
-                <p style="line-height: 1.6; color: var(--text-primary); font-size: 16px; margin-bottom: 4px;">${book.sinopsis}</p>
-                
-                <div style="margin-top: 40px; display: flex; gap: 15px;">
-                    <!-- PERBAIKAN DI SINI: Sudah ditambah id="readBtn" -->
-                    <a href="reader.html?id=${idBuku}" id="readBtn" target="_blank" class="btn-read" style="padding: 12px 30px; font-size: 16px; background-color: #6c5ce7; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">📖 Mulai Membaca</a>
-                    <button id="bookmarkBtn" style="background-color: #f1c40f; color: #2c3e50; border: none; padding: 12px 25px; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer;">⭐ Tambah Bookmark</button>
+                <div class="summary-box">
+                    <p style="margin: 0; line-height: 1.6; color: var(--text-primary); font-size: 16px;">${book.sinopsis}</p>
                 </div>
             </div>
         `;

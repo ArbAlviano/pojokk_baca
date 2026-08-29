@@ -9,66 +9,154 @@ const userStorage = localStorage.getItem('user');
 if (!token || !userStorage) {
     alert("Akses ditolak! Silakan login terlebih dahulu.");
     window.location.href = 'login.html';
-} else {
-    // Tampilkan nama user di navbar jika berhasil login
-    const user = JSON.parse(userStorage);
-    document.getElementById('welcomeText').innerText = `Halo, ${user.username}!`;
 }
 
-// 2. FUNGSI AMBIL DATA BUKU DARI BACKEND
+// 2. STATE: daftar buku, filter, pencarian, dan paginasi
+let allBooks = [];
+let currentGenre = '';
+let searchQuery = '';
+let currentPage = 1;
+const PER_PAGE = 20;
+
+// 3. FUNGSI RENDER KATALOG (filter genre + pencarian + paginasi)
 async function loadBooks(genre = '') {
-    const bookListContainer = document.getElementById('bookList');
-    bookListContainer.innerHTML = "<p>Sedang memuat buku...</p>";
+    currentGenre = genre;
+    currentPage = 1;
 
     // Atur status aktif pada tombol filter yang sedang diklik
     const buttons = document.querySelectorAll('.btn-filter');
     buttons.forEach(btn => {
-        if(btn.textContent === (genre || 'Semua')) btn.classList.add('active');
+        if (btn.textContent === (genre || 'Semua')) btn.classList.add('active');
         else btn.classList.remove('active');
     });
 
-    try {
-        // Tembak API backend (menggunakan parameter filter jika genre diisi)
-        const response = await fetch(`${API_URL}/api/books?genre=${genre}`);
-        const books = await response.json();
+    const bookListContainer = document.getElementById('bookList');
+    bookListContainer.innerHTML = "<p>Sedang memuat buku...</p>";
 
-        bookListContainer.innerHTML = ""; // Bersihkan teks loading
-
-        if (books.length === 0) {
-            bookListContainer.innerHTML = "<p>Tidak ada buku dalam genre ini.</p>";
+    // Ambil semua buku dari backend (hanya sekali), lalu filter di sisi klien
+    if (allBooks.length === 0) {
+        try {
+            const response = await fetch(`${API_URL}/api/books?genre=`);
+            allBooks = await response.json();
+        } catch (error) {
+            console.error("Gagal mengambil data buku:", error);
+            bookListContainer.innerHTML = "<p>Gagal mengambil data dari server backend.</p>";
             return;
         }
+    }
 
-        // Looping data JSON dan suntikkan ke dalam HTML
-        books.forEach(book => {
-            const cardHTML = `
-                <div class="book-card">
-                    <div>
-                        ${coverImgTag(book, '3b82f6')}
-                        <h4>${book.judul}</h4>
-                        <p>Penulis: ${book.penulis}</p>
-                    </div>
-                    <!-- MENGARAHKAN KE HALAMAN DETAIL BUKU SEPERTI YANG KAMU MAU -->
-                    <a href="detail.html?id=${book.id_buku}" class="btn-read" style="background-color: #3498db;">Lihat Deskripsi</a>
-                    </div>
-                `;
-            bookListContainer.innerHTML += cardHTML;
+    applyFilters();
+}
+
+function applyFilters() {
+    const bookListContainer = document.getElementById('bookList');
+
+    // Filter: genre
+    let list = currentGenre
+        ? allBooks.filter(book => book.genre && book.genre.toLowerCase() === String(currentGenre).toLowerCase())
+        : allBooks.slice();
+
+    // Filter: pencarian (judul atau penulis)
+    const q = searchQuery.trim().toLowerCase();
+    if (q) {
+        list = list.filter(book => {
+            const judul = (book.judul || '').toLowerCase();
+            const penulis = (book.penulis || '').toLowerCase();
+            return judul.includes(q) || penulis.includes(q);
         });
+    }
 
-    } catch (error) {
-        console.error("Gagal memuat buku:", error);
-        bookListContainer.innerHTML = "<p>Gagal mengambil data dari server backend.</p>";
+    // Paginasi
+    const totalPages = Math.max(1, Math.ceil(list.length / PER_PAGE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const start = (currentPage - 1) * PER_PAGE;
+    const pageBooks = list.slice(start, start + PER_PAGE);
+
+    if (list.length === 0) {
+        bookListContainer.innerHTML = "<p>Tidak ada buku yang cocok.</p>";
+        renderPagination(0);
+        return;
+    }
+
+    bookListContainer.innerHTML = "";
+    pageBooks.forEach(book => {
+        const cardHTML = `
+            <div class="book-card">
+                <div>
+                    ${coverImgTag(book, '3b82f6')}
+                    <h4>${book.judul}</h4>
+                    <p>Penulis: ${book.penulis}</p>
+                </div>
+                <a href="detail.html?id=${book.id_buku}" class="btn-read" style="background-color: #3498db;">Lihat Deskripsi</a>
+            </div>
+        `;
+        bookListContainer.innerHTML += cardHTML;
+    });
+
+    renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+    const pagination = document.getElementById('pagination');
+    if (!pagination) return;
+
+    if (totalPages <= 1) {
+        pagination.innerHTML = "";
+        return;
+    }
+
+    const btn = (label, onClick, isActive, disabled) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'page-btn' + (isActive ? ' active' : '');
+        b.textContent = label;
+        b.disabled = !!disabled;
+        b.addEventListener('click', onClick);
+        return b;
+    };
+
+    pagination.innerHTML = "";
+
+    // Tombol Sebelumnya
+    pagination.appendChild(btn('‹', () => { currentPage--; applyFilters(); window.scrollTo({ top: 0, behavior: 'smooth' }); }, false, currentPage === 1));
+
+    // Nomor halaman (semua)
+    for (let i = 1; i <= totalPages; i++) {
+        let page = i;
+        pagination.appendChild(btn(String(i), () => { currentPage = page; applyFilters(); window.scrollTo({ top: 0, behavior: 'smooth' }); }, i === currentPage, false));
+    }
+
+    // Tombol Berikutnya
+    pagination.appendChild(btn('›', () => { currentPage++; applyFilters(); window.scrollTo({ top: 0, behavior: 'smooth' }); }, false, currentPage === totalPages));
+}
+
+// 4. LOGIKA PENCARIAN (ikon di header membuka bar pencarian)
+function toggleSearchBar() {
+    const bar = document.getElementById('searchBar');
+    const input = document.getElementById('searchInput');
+    if (bar.hidden) {
+        bar.hidden = false;
+        input.focus();
+    } else {
+        bar.hidden = true;
+        input.value = '';
+        searchQuery = '';
+        currentPage = 1;
+        applyFilters();
     }
 }
 
 // Jalankan fungsi memuat semua buku pertama kali saat halaman dibuka
 loadBooks();
 
-// 3. LOGIKA LOGOUT
-document.getElementById('logoutBtn').addEventListener('click', () => {
-    localStorage.clear(); // Hapus token dari browser
-    alert("Berhasil logout!");
-    window.location.href = 'login.html';
+// Pasang event pencarian setelah elemen ada
+document.getElementById('searchCloseBtn').addEventListener('click', toggleSearchBar);
+document.getElementById('searchInput').addEventListener('input', function () {
+    searchQuery = this.value;
+    currentPage = 1;
+    applyFilters();
 });
 
 /* Tambahkan ini di bagian paling bawah file js/home.js */

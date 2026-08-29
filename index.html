@@ -7,6 +7,7 @@
     <title>Pojok Baca - Beranda</title>
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/nav.css">
     <script>
         window.API_URL = window.API_URL || 'https://pojokkbaca-production.up.railway.app';
     </script>
@@ -16,17 +17,19 @@
 <body>
 
     <!-- NAVBAR / BAGIAN ATAS -->
-    <!-- Bagian Navbar index.html yang diperbarui -->
         <header>
             <div class="logo">📚 Pojok Baca</div>
-            <div class="user-menu" style="display: flex; gap: 15px; align-items: center;">
-                <span id="welcomeText">Halo, Pembaca!</span>
-                <!-- TOMBOL BARU KE HALAMAN BOOKMARK -->
-                <button class="btn-bookmark-nav" onclick="window.location.href='bookmark.html'">🔖 Bookmark Saya</button>
-                <button id="logoutBtn">Logout</button>
+            <div style="display: flex; gap: 10px; align-items: center;">
                 <button class="theme-toggle" aria-label="Ganti tema terang/gelap"></button>
+                <div id="navRoot"></div>
             </div>
-</header>
+        </header>
+
+        <!-- SEARCH BAR -->
+        <div class="search-bar" id="searchBar" hidden>
+            <input type="text" id="searchInput" placeholder="Cari judul atau penulis buku..." autocomplete="off">
+            <button id="searchCloseBtn" class="search-close" aria-label="Tutup pencarian">✕</button>
+        </div>
 
 
     <!-- KONTEN UTAMA -->
@@ -49,6 +52,7 @@
             <div id="bookList" class="book-grid">
                 <!-- Data buku akan disuntikkan secara otomatis oleh JavaScript di sini -->
             </div>
+            <div class="pagination" id="pagination"></div>
         </section>
 
         <!-- letakkan ini di dalam tag <main> di index.html -->
@@ -64,5 +68,6 @@
     </main>
 
     <script src="js/home.js"></script>
+    <script src="js/nav.js"></script>
 </body>
 </html>

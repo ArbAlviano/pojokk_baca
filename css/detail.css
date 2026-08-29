@@ -21,6 +21,15 @@ header {
     font-weight: bold;
     color: var(--text-primary);
     cursor: pointer;
+    text-decoration: none;
+    color: var(--accent-purple);
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.logo:hover {
+    color: var(--accent-purple-hover);
+    text-decoration: underline;
+    opacity: 0.85;
 }
 
 .main-container {
@@ -62,6 +71,10 @@ header {
     text-align: center;
     font-size: 15px;
     transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .btn-main-read:hover {
@@ -78,6 +91,10 @@ header {
     font-size: 15px;
     cursor: pointer;
     transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .btn-main-bookmark:hover {
@@ -145,4 +162,48 @@ header {
     border-radius: 20px;
     font-size: 13px;
     font-weight: bold;
+}
+
+/* ===== Responsif untuk layar kecil (mobile) ===== */
+@media (max-width: 768px) {
+    header {
+        padding: 12px 16px;
+    }
+
+    .main-container {
+        flex-direction: column;
+        gap: 24px;
+        margin: 20px auto;
+        padding: 0 16px;
+    }
+
+    .left-content {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .left-content img {
+        display: block;
+        width: 220px;
+        height: 320px;
+        margin: 0 auto 20px;
+    }
+
+    .action-buttons {
+        max-width: 100%;
+    }
+
+    .book-title {
+        font-size: 26px;
+    }
+
+    .btn-main-read,
+    .btn-main-bookmark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
