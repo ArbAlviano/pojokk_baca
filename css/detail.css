@@ -1,6 +1,6 @@
 /* css/detail.css */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: var(--bg-page); /* Abu-abu terang yang lembut */
@@ -9,20 +9,25 @@ body {
 
 header {
     background-color: var(--bg-surface);
-    padding: 15px 40px;
+    padding: 14px 40px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: saturate(180%) blur(20px);
 }
 
 .logo {
     font-size: 22px;
-    font-weight: bold;
+    font-weight: 800;
     color: var(--text-primary);
     cursor: pointer;
     text-decoration: none;
     color: var(--accent-purple);
+    letter-spacing: -0.02em;
     transition: color 0.2s ease, opacity 0.2s ease;
 }
 
@@ -50,8 +55,8 @@ header {
     width: 100%;
     height: 380px;
     object-fit: cover;
-    border-radius: 8px;
-    box-shadow: var(--shadow-card); /* Bayangan lembut */
+    border-radius: 20px;
+    box-shadow: var(--shadow-card);
     margin-bottom: 20px;
 }
 
@@ -62,12 +67,12 @@ header {
 }
 
 .btn-main-read {
-    background-color: var(--accent-purple); /* Warna ungu modern seperti contoh */
+    background-color: var(--accent-blue);
     color: white;
     text-decoration: none;
-    padding: 12px;
-    border-radius: 6px;
-    font-weight: bold;
+    padding: 13px;
+    border-radius: 999px;
+    font-weight: 600;
     text-align: center;
     font-size: 15px;
     transition: background 0.2s;
@@ -78,16 +83,16 @@ header {
 }
 
 .btn-main-read:hover {
-    background-color: var(--accent-purple-hover);
+    background-color: var(--accent-blue-hover);
 }
 
 .btn-main-bookmark {
     background-color: var(--bg-surface);
     color: var(--text-primary);
     border: 1px solid var(--border-input);
-    padding: 12px;
-    border-radius: 6px;
-    font-weight: bold;
+    padding: 13px;
+    border-radius: 999px;
+    font-weight: 600;
     font-size: 15px;
     cursor: pointer;
     transition: background 0.2s;
@@ -107,7 +112,9 @@ header {
 }
 
 .book-title {
-    font-size: 32px;
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     margin: 0 0 5px 0;
     color: var(--text-primary);
 }
@@ -136,7 +143,7 @@ header {
 .summary-box {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 16px;
     padding: 20px;
     line-height: 1.6;
     color: var(--text-secondary);

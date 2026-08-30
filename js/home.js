@@ -152,7 +152,6 @@ function toggleSearchBar() {
 loadBooks();
 
 // Pasang event pencarian setelah elemen ada
-document.getElementById('searchCloseBtn').addEventListener('click', toggleSearchBar);
 document.getElementById('searchInput').addEventListener('input', function () {
     searchQuery = this.value;
     currentPage = 1;
@@ -178,6 +177,10 @@ async function loadReadingHistory() {
         historySection.style.display = "block"; // Munculkan jika ada riwayat
         historyListContainer.innerHTML = "";
 
+        if (new URLSearchParams(window.location.search).get('riwayat') === '1') {
+            setTimeout(() => historySection.scrollIntoView({ behavior: 'smooth' }), 100);
+        }
+
         historyBooks.forEach(book => {
             const cardHTML = `
                 <div class="book-card">
@@ -186,7 +189,7 @@ async function loadReadingHistory() {
                         <h4>${book.judul}</h4>
                         <p style="color: #e74c3c; font-weight: bold; font-size: 11px;">Dibaca baru-baru ini</p>
                     </div>
-                    <a href="detail.html?id=${book.id_buku}" class="btn-read" style="background-color: #e74c3c;">Lanjut Baca</a>
+                    <a href="reader.html?id=${book.id_buku}" class="btn-read" style="background-color: #e74c3c;">Lanjut Baca</a>
                 </div>
             `;
             historyListContainer.innerHTML += cardHTML;

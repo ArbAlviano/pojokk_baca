@@ -258,41 +258,6 @@
     outline-offset: 1px;
 }
 
-body.theme-dark .reader-header,
-body.theme-dark .reader-footer {
-    background: #1f2937;
-    border-color: #374151;
-    color: #f3f4f6;
-}
-
-body.theme-dark #backBtn,
-body.theme-dark .reader-controls button {
-    border-color: #374151;
-}
-
-body.theme-dark #backBtn:hover,
-body.theme-dark .reader-controls button:hover {
-    background: #374151;
-}
-
-body.theme-dark .progress-bar {
-    background: #374151;
-}
-
-body.theme-dark .loading-overlay {
-    background: #111827;
-}
-
-body.theme-dark .pdf-page-wrapper.lazy {
-    background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
-}
-
-body.theme-dark #pageInput {
-    background: #374151;
-    border-color: #4b5563;
-    color: #f3f4f6;
-}
-
 @media (max-width: 640px) {
     .reader-header {
         padding: 10px 16px;

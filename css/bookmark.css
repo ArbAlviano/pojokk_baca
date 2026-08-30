@@ -1,7 +1,9 @@
 /* css/bookmark.css */
 .catalog-section h2 {
     color: var(--text-primary);
-    border-bottom: 2px solid var(--accent-yellow); /* Garis bawah kuning khas warna bintang bookmark */
+    border-bottom: 2px solid var(--accent-yellow);
     padding-bottom: 10px;
     margin-bottom: 30px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
 }

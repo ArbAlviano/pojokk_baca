@@ -16,7 +16,6 @@ const nextBtn = document.getElementById('nextPage');
 const pageInput = document.getElementById('pageInput');
 const totalPagesEl = document.getElementById('totalPages');
 const backBtn = document.getElementById('backBtn');
-const themeToggle = document.getElementById('themeToggle');
 const fullscreenBtn = document.getElementById('fullscreenBtn');
 const readerContainer = document.getElementById('readerContainer');
 
@@ -37,21 +36,6 @@ function getAuth() {
     } catch {
         return { token: null, id_user: null };
     }
-}
-
-function applyTheme() {
-    const saved = localStorage.getItem('reader-theme');
-    const theme = saved || 'light';
-    document.body.classList.toggle('theme-dark', theme === 'dark');
-    themeToggle.textContent = theme === 'dark' ? '☾' : '☀';
-}
-
-function toggleTheme() {
-    const isDark = document.body.classList.toggle('theme-dark');
-    const newTheme = isDark ? 'dark' : 'light';
-    localStorage.setItem('reader-theme', newTheme);
-    themeToggle.textContent = isDark ? '☾' : '☀';
-    queueRenderAll();
 }
 
 function updateProgress(page) {
@@ -101,13 +85,13 @@ async function fetchSavedPage() {
     }
 }
 
-async function logRiwayatBuka() {
+async function logRiwayatBuka(halaman = 1) {
     const { id_user } = getAuth();
     if (!id_user || !bookId) return;
     fetch(`${API_URL}/api/riwayat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_user: Number(id_user), id_buku: Number(bookId) })
+        body: JSON.stringify({ id_user: Number(id_user), id_buku: Number(bookId), halaman: Number(halaman) || 1 })
     }).catch(() => {});
 }
 
@@ -237,10 +221,8 @@ async function loadPdf() {
         titleElement.textContent = book.judul;
         document.title = `${book.judul} - Pojok Baca`;
 
-        await logRiwayatBuka();
-
         const savedPage = await fetchSavedPage();
-
+        await logRiwayatBuka(savedPage);
         const pdfUrl = `${API_URL}/api/books/${bookId}/pdf`;
         const pdfTask = pdfjsLib.getDocument({ url: pdfUrl, withCredentials: false });
         pdfDoc = await pdfTask.promise;
@@ -273,7 +255,6 @@ function flushOnUnload() {
 }
 
 backBtn.addEventListener('click', () => history.back());
-themeToggle.addEventListener('click', toggleTheme);
 
 fullscreenBtn.addEventListener('click', () => {
     if (!document.fullscreenElement) {
@@ -314,5 +295,4 @@ document.addEventListener('visibilitychange', () => {
     if (document.hidden) flushOnUnload();
 });
 
-applyTheme();
 loadPdf();
