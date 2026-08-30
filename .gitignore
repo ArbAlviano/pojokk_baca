@@ -28,3 +28,9 @@ npm-debug.log*
 # OS files
 .DS_Store
 Thumbs.db
+AGENTS.md
+CONTEXT.md
+domain.md
+issue-tracker.md
+triage-labels.md
+rpl-menu.sql
