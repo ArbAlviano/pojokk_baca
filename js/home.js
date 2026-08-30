@@ -45,6 +45,7 @@ async function loadBooks(genre = '') {
         }
     }
 
+    buildGenreFilters();
     applyFilters();
 }
 
@@ -130,6 +131,41 @@ function renderPagination(totalPages) {
 
     // Tombol Berikutnya
     pagination.appendChild(btn('›', () => { currentPage++; applyFilters(); window.scrollTo({ top: 0, behavior: 'smooth' }); }, false, currentPage === totalPages));
+}
+
+// 3b. BANGUN TOMBOL FILTER GENRE DINAMIS BERDASARKAN DATA
+function buildGenreFilters() {
+    const container = document.getElementById('genreFilter');
+    if (!container) return;
+    if (container.children.length > 1) return;
+
+    const preferredOrder = ['Novel', 'Edukasi', 'Religi', 'Kumpulan Cerita', 'Puisi'];
+    const genres = [];
+    const seen = new Set();
+
+    allBooks.forEach(book => {
+        const g = book.genre;
+        if (!g) return;
+        const key = String(g);
+        if (seen.has(key.toLowerCase())) return;
+        seen.add(key.toLowerCase());
+        genres.push(key);
+    });
+
+    genres.sort((a, b) => {
+        const ia = preferredOrder.indexOf(a);
+        const ib = preferredOrder.indexOf(b);
+        return (ia === -1 ? preferredOrder.length : ia) - (ib === -1 ? preferredOrder.length : ib);
+    });
+
+    genres.forEach(genre => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-filter';
+        btn.textContent = genre;
+        btn.addEventListener('click', () => loadBooks(genre));
+        container.appendChild(btn);
+    });
 }
 
 // 4. LOGIKA PENCARIAN (ikon di header membuka bar pencarian)
