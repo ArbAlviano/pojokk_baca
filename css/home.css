@@ -216,6 +216,33 @@ header {
         gap: 12px;
     }
 
+    /* Riwayat tetap satu baris dan dapat digeser tanpa mengubah grid katalog. */
+    #historyList {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 12px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 8px 2px 12px;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    #historyList > a {
+        flex: 0 0 calc((100% - 12px) / 2);
+        min-width: 0;
+        scroll-snap-align: start;
+    }
+
+    #historyList .book-card {
+        height: 100%;
+    }
+
+    #historyList::-webkit-scrollbar {
+        height: 6px;
+    }
+
     .book-card {
         min-width: 0;
         padding: 10px;
