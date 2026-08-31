@@ -229,17 +229,12 @@ header {
         scrollbar-width: thin;
     }
 
-    #historyList > a {
+    #historyList > .book-card {
         /* Lebar kartu dikunci agar tidak menyusut mengikuti lebar layar. */
         flex: 0 0 150px;
-        width: 150px;
+        max-width: 150px;
         min-width: 0;
         scroll-snap-align: start;
-    }
-
-    #historyList .book-card {
-        box-sizing: border-box;
-        width: 100%;
     }
 
     #historyList::-webkit-scrollbar {
