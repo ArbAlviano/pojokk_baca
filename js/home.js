@@ -84,14 +84,15 @@ function applyFilters() {
     bookListContainer.innerHTML = "";
     pageBooks.forEach(book => {
         const cardHTML = `
+        <a href="detail.html?id=${book.id_buku}">
             <div class="book-card">
                 <div>
                     ${coverImgTag(book, '3b82f6')}
                     <h4>${book.judul}</h4>
                     <p>Penulis: ${book.penulis}</p>
                 </div>
-                <a href="detail.html?id=${book.id_buku}" class="btn-read" style="background-color: #3498db;">Lihat Deskripsi</a>
             </div>
+        </a>
         `;
         bookListContainer.innerHTML += cardHTML;
     });
@@ -219,14 +220,15 @@ async function loadReadingHistory() {
 
         historyBooks.forEach(book => {
             const cardHTML = `
+            <a href="detail.html?id=${book.id_buku}">
                 <div class="book-card">
                     <div>
                         ${coverImgTag(book, 'e74c3c')}
                         <h4>${book.judul}</h4>
                         <p style="color: #e74c3c; font-weight: bold; font-size: 11px;">Dibaca baru-baru ini</p>
                     </div>
-                    <a href="reader.html?id=${book.id_buku}" class="btn-read" style="background-color: #e74c3c;">Lanjut Baca</a>
                 </div>
+            </a>
             `;
             historyListContainer.innerHTML += cardHTML;
         });
