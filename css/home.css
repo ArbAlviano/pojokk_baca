@@ -229,12 +229,21 @@ header {
         scrollbar-width: thin;
     }
 
-    #historyList > .book-card {
-        /* Lebar kartu dikunci agar tidak menyusut mengikuti lebar layar. */
+    /* Kartu riwayat dibungkus oleh elemen <a>, jadi elemen inilah yang
+       perlu dikunci lebarnya agar tidak ikut menyusut di layar kecil. */
+    #historyList > a {
         flex: 0 0 150px;
+        width: 150px;
+        min-width: 150px;
         max-width: 150px;
-        min-width: 0;
+        text-decoration: none;
+        color: inherit;
         scroll-snap-align: start;
+    }
+
+    #historyList > a > .book-card {
+        box-sizing: border-box;
+        width: 100%;
     }
 
     #historyList::-webkit-scrollbar {
