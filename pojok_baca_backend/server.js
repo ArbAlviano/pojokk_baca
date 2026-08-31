@@ -316,7 +316,7 @@ app.get('/api/riwayat/:id_user', (req, res) => {
     // Ambil id_buku + waktu_baca dari DB saja; data buku diambil dari booksCache
     // supaya judul/metadata selalu konsisten dengan books.json (tidak bergantung pada tabel buku di DB).
     // Tidak memakai LIMIT di SQL: buku yang sudah dihapus dari booksCache disaring dulu,
-    // baru diambil 3 terbaru agar baris beranda selalu rapi.
+    // baru diambil 4 terbaru agar baris beranda selalu rapi.
     const query = `
         SELECT riwayat_baca.id_buku, riwayat_baca.waktu_baca 
         FROM riwayat_baca 
@@ -329,7 +329,7 @@ app.get('/api/riwayat/:id_user', (req, res) => {
         const books = results
             .map(({ id_buku, waktu_baca }) => resolveBookFromCache(booksCache, id_buku, { waktu_baca }))
             .filter(Boolean)
-            .slice(0, 3);
+            .slice(0, 4);
         res.json(books);
     });
 });
