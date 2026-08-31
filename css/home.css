@@ -230,13 +230,16 @@ header {
     }
 
     #historyList > a {
-        flex: 0 0 calc((100% - 12px) / 2);
+        /* Lebar kartu dikunci agar tidak menyusut mengikuti lebar layar. */
+        flex: 0 0 150px;
+        width: 150px;
         min-width: 0;
         scroll-snap-align: start;
     }
 
     #historyList .book-card {
-        height: 100%;
+        box-sizing: border-box;
+        width: 100%;
     }
 
     #historyList::-webkit-scrollbar {
