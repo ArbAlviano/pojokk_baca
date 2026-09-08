@@ -8,6 +8,7 @@ const path = require('path');
 const https = require('https');
 const http = require('http');
 const { resolveBookFromCache } = require('./lib/resolveBook');
+const { loginRateLimiter, resetLoginAttempts } = require('./lib/rateLimiter');
 require('dotenv').config();
 
 const app = express();
@@ -111,7 +112,7 @@ app.post('/api/register', async (req, res) => {
 });
 
 // 3. API LOGIN (Masuk & Mendapatkan Token Akses JWT)
-app.post('/api/login', (req, res) => {
+app.post('/api/login', loginRateLimiter, (req, res) => {
     const { username, password } = req.body;
 
     const query = "SELECT * FROM users WHERE username = ?";
@@ -120,7 +121,7 @@ app.post('/api/login', (req, res) => {
         
         // Jika username tidak ditemukan di database
         if (results.length === 0) {
-            return res.status(400).json({ message: "Username tidak ditemukan!" });
+            return res.status(400).json({ message: "Username atau password salah!" });
         }
 
         const user = results[0];
@@ -128,8 +129,10 @@ app.post('/api/login', (req, res) => {
         // Mencocokkan password yang diketik dengan password terenkripsi di database
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: "Password salah!" });
+            return res.status(400).json({ message: "Username atau password salah!" });
         }
+
+        resetLoginAttempts(req.ip);
 
         // Jika berhasil cocok, buat token digital (JWT) yang berlaku selama 1 hari (24 jam)
         const token = jwt.sign(
