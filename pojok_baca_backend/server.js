@@ -17,7 +17,7 @@ const app = express();
 app.use(cors());
 
 // Agar server bisa membaca data berformat JSON yang dikirim dari Frontend
-app.use(express.json()); 
+app.use(express.json({ limit: '1mb' }));
 
 // Kunci rahasia untuk membuat token login (JWT). Bebas diganti teks apa saja.
 const SECRET_KEY = "KODE_RAHASIA_POJOK_BACA_KAMU";
