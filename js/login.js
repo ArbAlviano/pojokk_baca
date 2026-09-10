@@ -29,6 +29,7 @@ function clearMessage() {
 function startCountdown(seconds) {
     setFormDisabled(true);
     let remaining = seconds;
+    localStorage.setItem('blockedUntil', String(Date.now() + seconds * 1000));
 
     showMessage(`Terlalu banyak percobaan gagal. Coba lagi dalam ${remaining} detik...`, 'warning');
 
@@ -37,12 +38,18 @@ function startCountdown(seconds) {
         if (remaining <= 0) {
             clearInterval(countdownInterval);
             countdownInterval = null;
+            localStorage.removeItem('blockedUntil');
             setFormDisabled(false);
             clearMessage();
         } else {
             showMessage(`Terlalu banyak percobaan gagal. Coba lagi dalam ${remaining} detik...`, 'warning');
         }
     }, 1000);
+}
+
+const savedBlockUntil = parseInt(localStorage.getItem('blockedUntil') || '0', 10);
+if (savedBlockUntil > Date.now()) {
+    startCountdown(Math.ceil((savedBlockUntil - Date.now()) / 1000));
 }
 
 loginForm.addEventListener('submit', async (e) => {
