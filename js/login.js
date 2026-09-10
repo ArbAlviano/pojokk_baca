@@ -1,42 +1,83 @@
 const API_URL = window.API_URL || 'http://localhost:5000';
 
-/* js/login.js */
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault(); // Mencegah halaman refresh otomatis
+let countdownInterval = null;
+let isBlocked = false;
 
-    const usernameInput = document.getElementById('username').value;
-    const passwordInput = document.getElementById('password').value;
+const loginForm = document.getElementById('loginForm');
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+const btnLogin = document.querySelector('.btn-login');
+const loginMessage = document.getElementById('loginMessage');
+
+function setFormDisabled(disabled) {
+    usernameInput.disabled = disabled;
+    passwordInput.disabled = disabled;
+    btnLogin.disabled = disabled;
+    isBlocked = disabled;
+}
+
+function showMessage(text, type) {
+    loginMessage.textContent = text;
+    loginMessage.className = type || '';
+}
+
+function clearMessage() {
+    loginMessage.textContent = '';
+    loginMessage.className = '';
+}
+
+function startCountdown(seconds) {
+    setFormDisabled(true);
+    let remaining = seconds;
+
+    showMessage(`Terlalu banyak percobaan gagal. Coba lagi dalam ${remaining} detik...`, 'warning');
+
+    countdownInterval = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            setFormDisabled(false);
+            clearMessage();
+        } else {
+            showMessage(`Terlalu banyak percobaan gagal. Coba lagi dalam ${remaining} detik...`, 'warning');
+        }
+    }, 1000);
+}
+
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (isBlocked) return;
+
+    const username = usernameInput.value;
+    const password = passwordInput.value;
+
+    clearMessage();
 
     try {
-        // Mengirim data login ke API server backend Node.js
         const response = await fetch(`${API_URL}/api/login`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: usernameInput,
-                password: passwordInput
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
         });
 
         const data = await response.json();
 
+        if (response.status === 429) {
+            startCountdown(data.retryAfter || 60);
+            return;
+        }
+
         if (response.ok) {
-            alert("Login Berhasil!");
-            
-            // SIMPAN TOKEN DAN DATA USER KE BROWSER
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
-
-            // Alihkan user ke halaman utama (Home) setelah login sukses
-            window.location.href = 'index.html'; 
+            window.location.href = 'index.html';
         } else {
-            // Menampilkan pesan gagal (misal: "Password salah!" atau "Username tidak ditemukan!")
-            alert("Gagal: " + data.message); 
+            showMessage(data.message || 'Username atau password salah!', 'error');
         }
     } catch (error) {
-        console.error("Error:", error);
-        alert("Terjadi kesalahan, pastikan server Backend Anda sudah aktif!");
+        console.error('Error:', error);
+        showMessage('Terjadi kesalahan, pastikan server Backend sudah aktif!', 'error');
     }
 });
