@@ -28,6 +28,7 @@
     "fs-extra": "^11.4.0",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.24.2",
-    "pdf-parse": "^2.4.5"
+    "pdf-parse": "^2.4.5",
+    "pino": "^10.3.1"
   }
 }

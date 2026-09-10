@@ -10,6 +10,8 @@ const http = require('http');
 const { resolveBookFromCache } = require('./lib/resolveBook');
 const { loginRateLimiter, resetLoginAttempts } = require('./lib/rateLimiter');
 require('dotenv').config();
+const pino = require('pino');
+const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
 
 const app = express();
 
@@ -18,6 +20,19 @@ app.use(cors());
 
 // Agar server bisa membaca data berformat JSON yang dikirim dari Frontend
 app.use(express.json({ limit: '1mb' }));
+
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+        logger.info({
+            method: req.method,
+            url: req.originalUrl,
+            status: res.statusCode,
+            ms: Date.now() - start
+        }, 'request');
+    });
+    next();
+});
 
 // Kunci rahasia untuk membuat token login (JWT). Bebas diganti teks apa saja.
 const SECRET_KEY = "KODE_RAHASIA_POJOK_BACA_KAMU";
@@ -31,13 +46,13 @@ async function loadBooks() {
     try {
         if (await fs.pathExists(BOOKS_FILE)) {
             booksCache = await fs.readJson(BOOKS_FILE);
-            console.log(`Loaded ${booksCache.length} books from JSON`);
+            logger.info({ count: booksCache.length }, 'Loaded books from JSON');
         } else {
-            console.warn('Books JSON not found. Run "npm run extract" first.');
+            logger.warn('Books JSON not found. Run "npm run extract" first.');
             booksCache = [];
         }
     } catch (error) {
-        console.error('Error loading books:', error);
+        logger.error({ err: error }, 'Error loading books');
         booksCache = [];
     }
 }
@@ -59,9 +74,9 @@ const db = mysql.createConnection(dbConfig);
 
 db.connect((err) => {
     if (err) {
-        console.error('Gagal koneksi ke database:', err);
+        logger.error({ err }, 'Gagal koneksi ke database');
     } else {
-        console.log('Berhasil terhubung ke database MySQL Laragon (db_pojok_baca)!');
+        logger.info('Berhasil terhubung ke database MySQL');
     }
 });
 
@@ -340,5 +355,5 @@ app.get('/api/riwayat/:id_user', (req, res) => {
 // MENJALANKAN SERVER BACKEND DI PORT 5000
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server Backend Pojok Baca aktif di port ${PORT}`);
+    logger.info({ port: PORT }, 'Server Backend Pojok Baca aktif');
 });
